@@ -1,30 +1,34 @@
-import { getFilter } from "redux/contactFilterSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { deletingContact, getPhoneBookValue } from "redux/contactSlice";
-
-
+import { ContactItem } from "components/ContactItem/ContactItem"
+import { useSelector } from "react-redux";
+import { getContacts } from "../../redux/contactsSlice";
+import { getFilter } from "../../redux/filterSlice";
 
 export const ContactList = () => {
-    const dispatch = useDispatch();
 
-    const phoneBook = useSelector(getPhoneBookValue);
-    const filterPhoneBook = useSelector(getFilter);
+ 
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
 
-    const lowerFilter = filterPhoneBook.toLowerCase();
-    const availableContacts = phoneBook.filter(({ name }) =>
-        (name.toLowerCase().includes(lowerFilter)));
-  
-    const deleteContact = (contactId) => {
-        dispatch(deletingContact(contactId))
-    };
-    
-    return (
-        <ul>
-            {availableContacts.map(({ name, number, id }) => (
-                <li key={id}>
-                    <p>{name}: {number}</p>
-                    <button type="button" onClick={() => deleteContact(id)}>Delete</button>
-                </li>))}
-        </ul>
+  const getFilteredContacts = () => {
+    const normalizedFilter = filter.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
     );
-};
+  };
+  const filteredContacts = getFilteredContacts();
+    return(
+       
+        <ul>
+           {filteredContacts.map(({ id, name, number }) => (
+        <ContactItem
+          key={id}
+          id={id}
+          name={name}
+          number={number}
+        ></ContactItem>
+      ))}
+        </ul>
+        
+    )
+}
+
